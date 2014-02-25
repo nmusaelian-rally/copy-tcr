@@ -10,7 +10,6 @@
     
     
     onScopeChange: function() {
-      console.log('iteration changed');
        if (this.down('#testSetComboxBox')) {
 	    this.down('#testSetComboxBox').destroy();
 	}
@@ -32,7 +31,6 @@
 	    listeners:{
                 ready: function(combobox){
 		    if (combobox.getRecord()) {
-			console.log('ready',combobox.getRecord().get('_ref'));
 			this._onTestSetSelected(combobox.getRecord());
 		    }
 		    else{
@@ -41,7 +39,6 @@
 		},
                 select: function(combobox){
 		    if (combobox.getRecord()) {
-			console.log('select',combobox.getRecord().get('_ref'));
 			this._onTestSetSelected(combobox.getRecord());
 		    }
 			        
@@ -103,8 +100,6 @@
 			}
 		    )
 		});
-		console.log('filterArray', filterArray); //ok
-		
 		 var filters = Ext.create('Rally.data.QueryFilter', filterArray[0]);
 		 
 		 filterArray = _.rest(filterArray,1);  
@@ -126,19 +121,14 @@
 		    listeners:{
 			ready: function(combobox){
 			    if (combobox.getRecord()) {
-				console.log('ready',combobox.getRecord().get('_ref'));
 				this._onTestCaseSelected(combobox.getRecord());
 			    }
 			    else{
 				console.log('selected testset has no testcases');
-				//if (this.down('#testCaseComboBox')) {
-				    //this.down('#testCaseComboBox').destroy();
-				//}
 			    }
 			},
 			select: function(combobox){
 			    if (combobox.getRecord()) {
-				console.log('select',combobox.getRecord().get('_ref'));
 				this._onTestCaseSelected(combobox.getRecord());
 			    }
 					
@@ -154,8 +144,6 @@
 	},
 	
     _onTestCaseSelected:function(selectedTestcase){
-      console.log('testcase', selectedTestcase);
-      
       var results = selectedTestcase.getCollection('Results', {fetch: ['ObjectID','Date', 'TestSet', 'TestCase', 'Build', 'Verdict']});
       var tc  = {
 		    ObjectID: selectedTestcase.get('ObjectID'),
@@ -181,20 +169,19 @@
     },
     
     _updateGrid: function(results){
-      console.log('results', results);
 	     var store = Ext.create('Rally.data.custom.Store', {
                 data: results,
                 pageSize: 100
             });
 	    if (!this.down('#resultsGrid')) {
-   		this.createGrid(store);
+   		this._createGrid(store);
 	    }
 	    else{
    		this.down('#resultsGrid').reconfigure(store);
 	    }
 	 },
 	 
-	 createGrid: function(store){
+  _createGrid: function(store){
 	    var that = this;
 	    var that = this;
 	    var resultsGrid = Ext.create('Rally.ui.grid.Grid', {
@@ -217,8 +204,6 @@
 		    ],
 		     listeners: {
 			    celldblclick: function( grid, td, cellIndex, record, tr, rowIndex){
-				var id = grid.getStore().getAt(rowIndex).get('ObjectID');
-				console.log('id', id);
 				that._copyRecordOnDoubleClick(record);     
 			    }
 		    }
@@ -231,7 +216,7 @@
 	     console.log('record', record);
 	     Rally.data.ModelFactory.getModel({
                 type: 'TestCaseResult',
-                success: function(model) {  //success on model retrieved
+                success: function(model) {  
                     that._model = model;
                     var copy = Ext.create(model, {
                         Date: record.get('Date'),
@@ -246,18 +231,11 @@
                                 console.log('result',result); 
                             }
                             else{
-                                console.log("Problem");
+                                console.log("problem");
                             }
                         }
                     });
                 }
             });
-	 }
-    
-    
-    
-    
-    
-    
-    
+	 }  
  });
